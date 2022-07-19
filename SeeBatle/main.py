@@ -76,7 +76,7 @@ class GamePole:
                        ]
         for ship in self._ships:
             ship.set_start_coords(randint(1, 10), randint(1, 10))
-            while any([ship.is_collide(i) for i in self._ships if i != ship]):
+            while any([ship.is_collide(i) for i in self._ships if (i != ship and i._x is not None)]) or ship.is_out_pole(self._size):
                 ship.set_start_coords(randint(1, 10), randint(1, 10))
 
     def get_ships(self):
@@ -93,4 +93,25 @@ class GamePole:
                     if any([ship.is_collide(i) for i in self._ships if i != ship]) or ship.is_out_pole(self._size):
                         ship.set_start_coords(*coords)
 
-    def
+    def get_pole(self):
+        pole = [[0 for _ in range(self._size)] for _ in range(self._size)]
+        for ship in self._ships:
+            data = list(zip(ship.get_cells_coords(ship), ship._cells))
+            for coords, vol in data:
+                pole[coords[1]-1][coords[0]-1] = vol
+        return tuple([tuple(i) for i in pole])
+
+    def show(self):
+        for row in self.get_pole():
+            print(*row)
+
+
+SIZE_GAME_POLE = 10
+
+pole = GamePole(SIZE_GAME_POLE)
+pole.init()
+pole.show()
+
+pole.move_ships()
+print()
+pole.show()
